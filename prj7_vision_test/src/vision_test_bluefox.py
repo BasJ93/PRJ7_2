@@ -10,6 +10,12 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import imutils
 import numpy as np
+import zbar
+import Image as Image_
+
+x = 0
+zeroX = 0
+zeroY = 0
 
 # Class that converts the image/video obtained from the bluefox2_single/image_raw topic to a image/video which
 # can be edited in python with use of openCV. 
@@ -22,12 +28,70 @@ class image_converter:
         # The image/video is received from the bluefox2_single/image_raw topic
         self.image_sub = rospy.Subscriber("bluefox2_single/image_raw", Image,self.callback)
 
+    def zeroreff(self, cv_image):
+        global zeroX
+        global zeroY        
+        
+        # create a reader
+        scanner = zbar.ImageScanner()
+
+        # configure the reader
+        scanner.parse_config('enable')
+
+#        pil = Image.open("/home/bas/catkin_ws/src/prj7_vision_test/src/camera_far.jpg").convert('L')
+
+        kernel_sharpen_3 = np.array([[-1,-1,-1,-1,-1],
+                             [-1,2,2,2,-1],
+                             [-1,2,8,2,-1],
+                             [-1,2,2,2,-1],
+                             [-1,-1,-1,-1,-1]]) / 8.0
+                             
+        output_3 = cv2.filter2D(cv_image, -1, kernel_sharpen_3)
+
+        # obtain image data
+        width, height = output_3.shape[:2]
+        raw = output_3.tostring()        
+        pil = Image_.fromstring("L", (height, width), raw)   
+        width, height = pil.size    
+        zbarString = pil.tostring()
+
+        # wrap image data
+        image = zbar.Image(width, height, 'Y800', zbarString)
+
+        # scan the image for barcodes
+        scanner.scan(image)
+
+        # extract results
+        for symbol in image:
+            # do something useful with results
+            if symbol.data == "None":
+                return "No QR code found"
+            else:
+                loc = symbol.location
+#                print (loc)                
+                zeroX = (loc[0][0]+loc[2][0])/2
+                zeroY = (loc[0][1]+loc[2][1])/2
+                width = (loc[1][0] - loc[0][0])
+                height = (loc[2][1] - loc[1][1])
+                pixel_x = abs(74.0 / width)
+                pixel_y = abs(74.0 / height)
+                print (symbol.data)
+                print ("Zero:", zeroX, zeroY)
+                print ("Dimensions:", width, height)
+                print ("mm/px:", pixel_x, pixel_y, max(pixel_x, pixel_y))
+#                cv2.rectangle(cv_image, symbol.location[0], symbol.location[2], (0, 255, 0))
+
     def callback(self,data):
         try:
             # cv_image = converted image/video from ROS to openCV
             cv_image = self.bridge.imgmsg_to_cv2(data, "mono8")
         except CvBridgeError as e:
             print(e)
+
+        global x
+        if x<1:
+            image_converter.zeroreff(self, cv_image)
+            x = 1
 
 #--------------------Code to detect objects / get cordinates ----------------------------------------        
         # blur the image slightly, and threshold it

@@ -69,8 +69,8 @@ class image_converter:
 #                print (loc)                
                 x = (loc[0][0]+loc[2][0])/2
                 y = (loc[0][1]+loc[2][1])/2
-                width = (loc[2][0] - loc[0][0])
-                height = (loc[2][1] - loc[0][1])
+                width = (loc[1][0] - loc[0][0])
+                height = (loc[2][1] - loc[1][1])
                 pixel_x = abs(74.0 / width)
                 pixel_y = abs(74.0 / height)
                 print (symbol.data)
