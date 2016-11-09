@@ -13,7 +13,7 @@ import imutils
 # can be edited in python with use of openCV. 
 class image_converter:    
     def __init__(self):
-        # The resulting image/video after editiing is published to the image_topic_2 topic
+        # The resulting image/video after editing is published to the image_topic_2 topic
         self.image_pub = rospy.Publisher("image_topic_2", Image, queue_size=1000)
 
         self.bridge = CvBridge()

@@ -1,12 +1,19 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+from __future__ import print_function
 import sys
-import roslib
-import rospy
-from cv_bridge import CvBridge, CvBridgeError
-import zbar
 from sensor_msgs.msg import Image as RosImage
+from cv_bridge import CvBridge, CvBridgeError
+#import numpy as np
+#import roslib
+#import imutils
+#import imageio
+#import skimage
 import Image
+import rospy
+import zbar
 import cv2
+
+x = 0
 
 class image_converter:    
     def __init__(self):
@@ -20,44 +27,49 @@ class image_converter:
             cv_image = self.bridge.imgmsg_to_cv2(data, "mono8")
         except CvBridgeError as e:
             print(e)
-
-
-        cv2.imshow("QR", cv_image)
-#        pil_im = Image.fromarray(cv_image)
-#        pil_im.show()
-
+            
+#--------------------Code to detect QR code ----------------------------------------------------------   
         # create a reader
-#        scanner = zbar.ImageScanner()
+        scanner = zbar.ImageScanner()
 
         # configure the reader
-#        scanner.parse_config('enable')
+        scanner.parse_config('enable')
 
-#        gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY,dstCn=0)
         # obtain image data
-#        pil = Image.fromarray(gray)
-#        width, height = pil.size
-#        raw = pil.tostring()
+        width, height = cv_image.shape[:2]
+        raw = cv_image.tostring()        
+#        pil = Image.fromstring("L", (height, width), raw)       
+#        zbarString = pil.tostring()
 
-
-#        gray = Image.fromstring("L", cv_image.shape[:2], cv_image.tostring())
-#        pil = Image.fromarray(gray)
-#        width, height = pil.size
-#        raw = pil.tostring()
         # wrap image data
-#        image = zbar.Image(width, height, 'Y800', raw)
+        image = zbar.Image(width, height, 'Y800', raw)
 
         # scan the image for barcodes
-#        scanner.scan(image)        
+        scanner.scan(image)
 
         # extract results
-#        for symbol in image:
+        for symbol in image:
+            print (symbol.type)
             # do something useful with results
-#            print (symbol.location)
-#            print ("123")
+            if symbol.data == "None":
+                return "No QR code found"
+            else:
+                return symbol.data
+            print (symbol.location)
+            print ("123")
             
-#        raw.show()
 #        print ("567")
-
+            
+#------------------------------------------------------------------------------------------------------------        
+        # Window which displays the image
+        global x
+        if x < 1:
+            raw.show()
+            x = x+1
+        cv2.imshow("Detection", cv_image)
+        cv2.waitKey(3)
+        
+#---------------------------------------------------------------------------------------------------------------
 def main(args):
     rospy.init_node('image_converter', anonymous=True)
     image_converter()
