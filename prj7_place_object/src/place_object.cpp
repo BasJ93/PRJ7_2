@@ -116,34 +116,17 @@ int main(int argc, char **argv)
 	ros::NodeHandle n;
 	ros::Publisher vis_pub = n.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
 	collis_pub = n.advertise<moveit_msgs::CollisionObject>("collision_object", 0);
-	ros::Subscriber obj_sub = n.subscribe("prj7_box", 1000, objectCallback);
 	ros::Duration(2.0).sleep();// This delay is so critical, otherwise the first published object may not be added in the collision_space by the environment_server
-/*	int i = 0;
-	float x[4] = {0.2, 0.2, -0.6, 0};
-	float y[4] = {-0.2, -0.2, 0, 0.3};
-	float z[4] = {0.6, 0.2, 0.4, 0};
-	if(ros::ok())
+	ros::Subscriber obj_sub = n.subscribe("prj7_box_bluefox", 1000, objectCallback);
+
+	while(ros::ok())
 	{
-		for(i=0; i<4; i++)
+		//ROS_INFO("Cleaning up objects");
+		for(int i=5; i<200; i++)
 		{
-			ROS_INFO("Placing collision block %i at %f, %f, %f", i, x[i], y[i], z[i]);
-		collision_place_block(collis_pub, i, 0.1, 0.1, 0.1, x[i], y[i], z[i]);
+			collision_remove_block(collis_pub, i);
 		}
-	}
-	while (ros::ok())
-	{
-		ros::Duration(5.0).sleep();
-		ROS_INFO("Moving box 3 to new position");
-		collision_move_block(collis_pub, 3, 0, 0, 0.6);
-		ros::Duration(5.0).sleep();
-		ROS_INFO("Moving box 3 to new position");
-		collision_move_block(collis_pub, 3, 0, 0.3, 0);
-	}
-*/
-//	collision_place_block(collis_pub, 0, 0.1, 0.1, 0.1, 1, 1, 0, 1.0);
-//	collision_place_block(collis_pub, 1, 0.1, 0.1, 0.1, 1, 2, 0, 0.25);
-	while(ros::ok());
-	{
+		ros::Duration(1.0).sleep();
 	}
 	return 0;
 }
