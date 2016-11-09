@@ -3,7 +3,7 @@ from __future__ import print_function
 import sys
 from sensor_msgs.msg import Image as RosImage
 from cv_bridge import CvBridge, CvBridgeError
-#import numpy as np
+import numpy as np
 #import roslib
 #import imutils
 #import imageio
@@ -13,7 +13,8 @@ import rospy
 import zbar
 import cv2
 
-x = 0
+
+#QR codes are 74mm square
 
 class image_converter:    
     def __init__(self):
@@ -35,37 +36,51 @@ class image_converter:
         # configure the reader
         scanner.parse_config('enable')
 
+#        pil = Image.open("/home/bas/catkin_ws/src/prj7_vision_test/src/camera_far.jpg").convert('L')
+
+        kernel_sharpen_3 = np.array([[-1,-1,-1,-1,-1],
+                             [-1,2,2,2,-1],
+                             [-1,2,8,2,-1],
+                             [-1,2,2,2,-1],
+                             [-1,-1,-1,-1,-1]]) / 8.0
+                             
+        output_3 = cv2.filter2D(cv_image, -1, kernel_sharpen_3)
+
         # obtain image data
-        width, height = cv_image.shape[:2]
-        raw = cv_image.tostring()        
-#        pil = Image.fromstring("L", (height, width), raw)       
-#        zbarString = pil.tostring()
+        width, height = output_3.shape[:2]
+        raw = output_3.tostring()        
+        pil = Image.fromstring("L", (height, width), raw)   
+        width, height = pil.size    
+        zbarString = pil.tostring()
 
         # wrap image data
-        image = zbar.Image(width, height, 'Y800', raw)
+        image = zbar.Image(width, height, 'Y800', zbarString)
 
         # scan the image for barcodes
         scanner.scan(image)
 
         # extract results
         for symbol in image:
-            print (symbol.type)
             # do something useful with results
             if symbol.data == "None":
                 return "No QR code found"
             else:
-                return symbol.data
-            print (symbol.location)
-            print ("123")
-            
-#        print ("567")
+                loc = symbol.location
+#                print (loc)                
+                x = (loc[0][0]+loc[2][0])/2
+                y = (loc[0][1]+loc[2][1])/2
+                width = (loc[2][0] - loc[0][0])
+                height = (loc[2][1] - loc[0][1])
+                pixel_x = abs(74.0 / width)
+                pixel_y = abs(74.0 / height)
+                print (symbol.data)
+                print ("Zero:", x, y)
+                print ("Dimensions:", width, height)
+                print ("mm/px:", pixel_x, pixel_y, max(pixel_x, pixel_y))
+                cv2.rectangle(cv_image, symbol.location[0], symbol.location[2], (0, 255, 0))
             
 #------------------------------------------------------------------------------------------------------------        
         # Window which displays the image
-        global x
-        if x < 1:
-            raw.show()
-            x = x+1
         cv2.imshow("Detection", cv_image)
         cv2.waitKey(3)
         
