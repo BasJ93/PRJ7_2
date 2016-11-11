@@ -5,11 +5,14 @@ import roslib
 import sys
 import rospy
 import cv2
-from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import imutils
 import numpy as np
+
+#Authors: Guido laessen, Bas Janssen
+#Fontys Mechatronica
+#2016
 
 # Class that converts the image/video obtained from the bluefox2_single/image_raw topic to a image/video which
 # can be edited in python with use of openCV. 
