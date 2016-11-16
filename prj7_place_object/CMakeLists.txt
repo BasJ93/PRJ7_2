@@ -132,8 +132,10 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(prj7_place_object_node src/prj7_place_object_node.cpp)
 add_executable(prj7_place_object src/place_object.cpp)
+add_executable(prj7_place_3d_object src/place_3d_object.cpp)
 
 target_compile_options(prj7_place_object PRIVATE -std=c++11)
+target_compile_options(prj7_place_3d_object PRIVATE -std=c++11)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -144,6 +146,7 @@ target_compile_options(prj7_place_object PRIVATE -std=c++11)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(prj7_place_object ${catkin_LIBRARIES})
+target_link_libraries(prj7_place_3d_object ${catkin_LIBRARIES})
 
 #############
 ## Install ##

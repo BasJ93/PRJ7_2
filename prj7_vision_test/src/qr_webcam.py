@@ -27,11 +27,11 @@ pixel = 1
 class image_converter:    
     def __init__(self):
         # Publisher for the box coordinates and size
-        self.box_pub = rospy.Publisher("prj7_box_bluefox", prj7_box, queue_size=1000)
+        self.box_pub = rospy.Publisher("prj7_box_usb", prj7_box, queue_size=1000)
 
         self.bridge = CvBridge()
         # The image/video is received from the bluefox2_single/image_raw topic
-        self.image_sub = rospy.Subscriber("bluefox2_single/image_raw", Image,self.callback)
+        self.image_sub = rospy.Subscriber("usb_cam/image_raw", Image,self.callback)
 
     def zeroreff(self, cv_image):
         global zeroX
@@ -78,8 +78,8 @@ class image_converter:
                 zeroY = (loc[0][1]+loc[2][1])/2
                 width = (loc[1][0] - loc[0][0])
                 height = (loc[2][1] - loc[1][1])
-                pixel_x = abs(74.0 / width)/1000
-                pixel_y = abs(74.0 / height)/1000
+                pixel_x = abs(74.0 / width) / 1000
+                pixel_y = abs(74.0 / height) / 1000
                 pixel = max(pixel_x, pixel_y)
                 print (symbol.data)
                 print ("Zero:", zeroX, zeroY)
@@ -107,8 +107,12 @@ class image_converter:
 
 #--------------------Code to detect objects / get cordinates ----------------------------------------        
         # blur the image slightly, and threshold it
-        blurred = cv2.GaussianBlur(cv_image, (5, 5), 0)
-        thresh = cv2.threshold(blurred, 84, 255, cv2.THRESH_BINARY_INV)[1]
+        background = cv2.imread("/home/bas/catkin_ws/src/prj7_vision_test/src/background.png", 0)        
+        
+        foreground = cv2.absdiff(cv_image, background)
+
+        blurred = cv2.GaussianBlur(foreground, (5, 5), 0)
+        thresh = cv2.threshold(blurred, 84, 255, cv2.THRESH_BINARY)[1]
         
         # find contours in the thresholded image
         cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
