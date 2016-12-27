@@ -7,7 +7,8 @@
            controller_joint_names: [joint_1, joint_2, ... joint_N] 
        - Update with joint names for your robot (in order expected by rbt controller)
        - and uncomment the following line: -->
-  <!-- <rosparam command="load" file="$(find abb_irb140_moveit_config)/config/joint_names.yaml"/> -->
+  <param name="move_group/trajectory_execution/execution_duration_monitoring" value="false"/>
+  <rosparam command="load" file="$(find abb_irb140_support)/config/joint_names_irb140.yaml"/>
  
   <!-- the "sim" argument controls whether we connect to a Simulated or Real robot -->
   <!--  - if sim=false, a robot_ip argument is required -->
@@ -28,7 +29,7 @@
   <!--   - this typically includes: robot_state, motion_interface, and joint_trajectory_action nodes -->
   <!--   - replace these calls with appropriate robot-specific calls or launch files -->
   <group unless="$(arg sim)">
-    <include file="$(find [robot_interface_pkg])/launch/robot_interface.launch" >
+    <include file="$(find abb_irb140_support)/launch/robot_interface_download_irb140.launch" >
       <arg name="robot_ip" value="$(arg robot_ip)"/>
     </include>
   </group>

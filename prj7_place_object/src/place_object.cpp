@@ -103,7 +103,7 @@ void collision_move_block(ros::Publisher collis_pub, int id, float x, float y, f
 void objectCallback(const prj7_vision_test::prj7_box::ConstPtr& msg)
 {
 	collision_remove_block(collis_pub, msg->id);
-	collision_place_block(collis_pub, msg->id, msg->width * 0.0009, msg->height * 0.0009, 2, msg->x * 0.0009, msg->y * 0.0009, 0, msg->rotation); 
+	collision_place_block(collis_pub, msg->id, msg->width * 0.001, msg->height * 0.001, 2, msg->x * 0.001, msg->y * 0.001, 0, msg->rotation); 
 }
 
 int main(int argc, char **argv)
@@ -121,8 +121,8 @@ int main(int argc, char **argv)
 
 	while(ros::ok())
 	{
-		//ROS_INFO("Cleaning up objects");
-		for(int i=5; i<200; i++)
+		ROS_INFO("Cleaning up objects");
+		for(int i=0; i<200; i++)
 		{
 			collision_remove_block(collis_pub, i);
 		}

@@ -78,8 +78,8 @@ class image_converter:
                 zeroY = (loc[0][1]+loc[2][1])/2
                 width = (loc[1][0] - loc[0][0])
                 height = (loc[2][1] - loc[1][1])
-                pixel_x = abs(74.0 / width)/1000
-                pixel_y = abs(74.0 / height)/1000
+                pixel_x = abs(74.0 / width)#/1000
+                pixel_y = abs(74.0 / height)#/1000
                 pixel = max(pixel_x, pixel_y)
                 print (symbol.data)
                 print ("Zero:", zeroX, zeroY)
@@ -108,7 +108,7 @@ class image_converter:
 #--------------------Code to detect objects / get cordinates ----------------------------------------        
         # blur the image slightly, and threshold it
         blurred = cv2.GaussianBlur(cv_image, (5, 5), 0)
-        thresh = cv2.threshold(blurred, 84, 255, cv2.THRESH_BINARY_INV)[1]
+        thresh = cv2.threshold(blurred, 80, 255, cv2.THRESH_BINARY_INV)[1]
         
         # find contours in the thresholded image
         cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

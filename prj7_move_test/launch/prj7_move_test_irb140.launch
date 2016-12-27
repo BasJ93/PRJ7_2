@@ -7,7 +7,7 @@
            controller_joint_names: [joint_1, joint_2, ... joint_N] 
        - Update with joint names for your robot (in order expected by rbt controller)
        - and uncomment the following line: -->
-  <!-- <rosparam command="load" file="$(find abb_irb140_moveit_config)/config/joint_names.yaml"/> -->
+  <!-- <rosparam command="load" file="$(find abb_irb120_moveit_config)/config/joint_names.yaml"/> -->
  
   <!-- the "sim" argument controls whether we connect to a Simulated or Real robot -->
   <!--  - if sim=false, a robot_ip argument is required -->
@@ -15,7 +15,7 @@
   <arg name="robot_ip" unless="$(arg sim)" />
  
   <!-- load the robot_description parameter before launching ROS-I nodes -->
-  <include file="$(find abb_irb140_moveit_config)/launch/planning_context.launch" >
+  <include file="$(find abb_irb120_moveit_config)/launch/planning_context.launch" >
     <arg name="load_robot_description" value="true" />
   </include>
 
@@ -36,16 +36,16 @@
   <!-- publish the robot state (tf transforms) -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-  <include file="$(find abb_irb140_moveit_config)/launch/move_group.launch">
+  <include file="$(find abb_irb120_moveit_config)/launch/move_group.launch">
     <arg name="publish_monitored_planning_scene" value="true" />
   </include>
 
-  <include file="$(find abb_irb140_moveit_config)/launch/moveit_rviz.launch">
+  <include file="$(find abb_irb120_moveit_config)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
   </include>
   
-  <include file="$(find abb_irb140_moveit_config)/launch/default_warehouse_db.launch" />
+  <include file="$(find abb_irb120_moveit_config)/launch/default_warehouse_db.launch" />
 
-  <node name="prj7_irb140_move_test" pkg="prj7_move_test" type="prj7_irb140_move_test" output="screen" />
+  <node name="prj7_irb120_move_test" pkg="prj7_move_test" type="prj7_irb120_move_test" output="screen" />
 
 </launch>

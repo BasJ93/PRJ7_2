@@ -48,7 +48,7 @@
 
   <node name="bluefox2_single" pkg="bluefox2" type="bluefox2_single_node"/>
 
-  <node name="prj7_vision_test2" pkg="prj7_vision_test" type="vision_test_bluefox.py" output="screen"/>
+  <node name="prj7_vision_test2" pkg="prj7_vision_test" type="qr_bluefox.py" output="screen"/>
 
   <node name="prj7_place_objects" pkg="prj7_place_object" type="prj7_place_object" />
 

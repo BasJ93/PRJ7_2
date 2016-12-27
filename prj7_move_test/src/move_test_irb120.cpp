@@ -23,10 +23,10 @@ int main(int argc, char **argv)
 	
 	while(ros::ok())
 	{
-		if(i == 2)
-		{
-			break;
-		}
+//		if(i == 2)
+//		{
+//			break;
+//		}
 		x = 0;
 		y = 0.3;
 		z = 0.8;
