@@ -20,6 +20,7 @@ x = 0
 zeroX = 0
 zeroY = 0
 pixel = 1
+background = 0
 
 # Class that converts the image/video obtained from the bluefox2_single/image_raw topic to a image/video which
 # can be edited in python with use of openCV.
@@ -37,6 +38,9 @@ class image_converter:
         global zeroX
         global zeroY 
         global pixel
+        
+        global background
+        background = cv_image
         
         # create a reader
         scanner = zbar.ImageScanner()
@@ -100,19 +104,20 @@ class image_converter:
         global pixel
         global x
         
+        global background
+        
         # Perhaps we can do this once in a while to make sure the calibration stays acurate.
         if x<1:
             image_converter.zeroreff(self, cv_image)
             x = 1
 
 #--------------------Code to detect objects / get cordinates ----------------------------------------        
-        # blur the image slightly, and threshold it
-        background = cv2.imread("/home/bas/catkin_ws/src/prj7_vision_test/src/background.png", 0)        
+        # blur the image slightly, and threshold it      
         
         foreground = cv2.absdiff(cv_image, background)
 
         blurred = cv2.GaussianBlur(foreground, (5, 5), 0)
-        thresh = cv2.threshold(blurred, 84, 255, cv2.THRESH_BINARY)[1]
+        thresh = cv2.threshold(blurred, 100, 255, cv2.THRESH_BINARY)[1]
         
         # find contours in the thresholded image
         cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
